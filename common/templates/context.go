@@ -497,27 +497,36 @@ func baseContextFuncs(c *Context) {
 	// Mentions
 	c.addContextFunc("mentionEveryone", c.tmplMentionEveryone)
 	c.addContextFunc("mentionHere", c.tmplMentionHere)
+	c.addContextFunc("mentionRole", c.tmplMentionRole)
 	c.addContextFunc("mentionRoleName", c.tmplMentionRoleName)
 	c.addContextFunc("mentionRoleID", c.tmplMentionRoleID)
 
 	// Role functions
-	c.addContextFunc("hasRoleName", c.tmplHasRoleName)
+	c.addContextFunc("getRole", c.tmplGetRole)
+
+	c.addContextFunc("hasRole", c.tmplHasRole)
 	c.addContextFunc("hasRoleID", c.tmplHasRoleID)
+	c.addContextFunc("hasRoleName", c.tmplHasRoleName)
 
-	c.addContextFunc("addRoleID", c.tmplAddRoleID)
-	c.addContextFunc("removeRoleID", c.tmplRemoveRoleID)
+	c.addContextFunc("targetHasRole", c.tmplTargetHasRole)
+	c.addContextFunc("targetHasRoleID", c.tmplTargetHasRoleID)
+	c.addContextFunc("targetHasRoleName", c.tmplTargetHasRoleName)
 
-	c.addContextFunc("addRoleName", c.tmplAddRoleName)
-	c.addContextFunc("removeRoleName", c.tmplRemoveRoleName)
-
+	c.addContextFunc("giveRole", c.tmplGiveRole)
 	c.addContextFunc("giveRoleID", c.tmplGiveRoleID)
 	c.addContextFunc("giveRoleName", c.tmplGiveRoleName)
 
+	c.addContextFunc("addRole", c.tmplAddRole)
+	c.addContextFunc("addRoleID", c.tmplAddRoleID)
+	c.addContextFunc("addRoleName", c.tmplAddRoleName)
+
+	c.addContextFunc("takeRole", c.tmplTakeRole)
 	c.addContextFunc("takeRoleID", c.tmplTakeRoleID)
 	c.addContextFunc("takeRoleName", c.tmplTakeRoleName)
 
-	c.addContextFunc("targetHasRoleID", c.tmplTargetHasRoleID)
-	c.addContextFunc("targetHasRoleName", c.tmplTargetHasRoleName)
+	c.addContextFunc("removeRole", c.tmplRemoveRole)
+	c.addContextFunc("removeRoleID", c.tmplRemoveRoleID)
+	c.addContextFunc("removeRoleName", c.tmplRemoveRoleName)
 
 	c.addContextFunc("deleteResponse", c.tmplDelResponse)
 	c.addContextFunc("deleteTrigger", c.tmplDelTrigger)
