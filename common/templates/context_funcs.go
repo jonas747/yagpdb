@@ -907,24 +907,6 @@ func (c *Context) tmplEditNickname(Nickname string) (string, error) {
 	return "", nil
 }
 
-func (c *Context) getMember(id interface{}) (*dstate.MemberState, error) {
-	targetID := targetUserID(id)
-	if targetID == 0 {
-		return nil, fmt.Errorf("Target %v not found", id)
-	}
-
-	ms, err := bot.GetMember(c.GS.ID, targetID)
-	if err != nil {
-		return nil, err
-	}
-
-	if ms == nil {
-		return nil, errors.New("MemberState not found")
-	}
-
-	return ms, nil
-}
-
 // c.FindRole accepts all possible role inputs (names, IDs and mentions)
 // and tries to find them on the current context
 func (c *Context) FindRole(role interface{}) *discordgo.Role {
@@ -1043,9 +1025,18 @@ func (c *Context) targetHasRole(target interface{}, roleInput interface{}) (bool
 		return false, ErrTooManyAPICalls
 	}
 
-	ts, err := c.getMember(target)
+	targetID := targetUserID(target)
+	if targetID == 0 {
+		return false, fmt.Errorf("Target %v not found", target)
+	}
+
+	ms, err := bot.GetMember(c.GS.ID, targetID)
 	if err != nil {
 		return false, err
+	}
+
+	if ms == nil {
+		return false, errors.New("MemberState not found")
 	}
 
 	role := c.FindRole(roleInput)
@@ -1053,7 +1044,7 @@ func (c *Context) targetHasRole(target interface{}, roleInput interface{}) (bool
 		return false, fmt.Errorf("Role %v not found", roleInput)
 	}
 
-	return common.ContainsInt64Slice(ts.Roles, role.ID), nil
+	return common.ContainsInt64Slice(ms.Roles, role.ID), nil
 }
 
 func (c *Context) tmplTargetHasRole(target interface{}, roleInput interface{}) bool {
