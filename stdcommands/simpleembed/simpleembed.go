@@ -30,14 +30,28 @@ var Command = &commands.YAGCommand{
 		&dcmd.ArgDef{Switch: "thumbnail", Help: "Url to a thumbnail", Type: dcmd.String, Default: ""},
 		&dcmd.ArgDef{Switch: "image", Help: "Url to an image", Type: dcmd.String, Default: ""},
 
-		&dcmd.ArgDef{Switch: "author", Help: "The text in the 'author' field", Type: dcmd.String, Default: ""},
+		&dcmd.ArgDef{Switch: "author", Help: "The text in the 'author' field", Type: dcmd.String, Default: "\u200b"},
 		&dcmd.ArgDef{Switch: "authoricon", Help: "Url to a icon for the 'author' field", Type: dcmd.String, Default: ""},
 		&dcmd.ArgDef{Switch: "authorurl", Help: "Url of the 'author' field", Type: dcmd.String, Default: ""},
 
-		&dcmd.ArgDef{Switch: "footer", Help: "Text content for the footer", Type: dcmd.String, Default: ""},
+		&dcmd.ArgDef{Switch: "footer", Help: "Text content for the footer", Type: dcmd.String, Default: "\u200b"},
 		&dcmd.ArgDef{Switch: "footericon", Help: "Url to a icon for the 'footer' field", Type: dcmd.String, Default: ""},
 	},
 	RunFunc: func(data *dcmd.Data) (interface{}, error) {
+		if data.Switch("channel").Str() != "" || 
+			data.Switch("content").Str() != "" || 
+			data.Switch("color").Str() != "" || 
+			data.Switch("url").Str() != "" || 
+			data.Switch("authorurl").Str() != "" {
+    			if data.Switch("title").Str() == "" && 
+				data.Switch("desc").Str() == "" && 
+				data.Switch("thumbnail").Str() == "" && 
+				data.Switch("image").Str() == "" && 
+				data.Switch("author").Str() == "" && 
+				data.Switch("footer").Str() == "" {
+        			return "Fields title, desc, thumbnail, image, author, or footer is required", nil
+    			}
+		}
 		content := data.Switch("content").Str()
 		embed := &discordgo.MessageEmbed{
 			Title:       data.Switch("title").Str(),

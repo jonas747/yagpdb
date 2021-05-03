@@ -24,6 +24,30 @@ var Command = &commands.YAGCommand{
 		err := json.Unmarshal([]byte(data.Args[0].Str()), &parsed)
 		if err != nil {
 			return "Failed parsing json: " + err.Error(), err
+		}	
+		// fallback for missing embed fields
+		if string(rune(parsed.Color)) != "" || 
+			parsed.URL != "" || 
+			parsed.Author.URL != "" {
+			if parsed.Title == "" && 
+				parsed.Description == "" && 
+				parsed.Thumbnail.URL == "" && 
+				parsed.Image.URL == "" && 
+				parsed.Author.Name == "" && 
+				parsed.Footer.Text == "" {
+				return "Fields title, description, thumbnail, image, author, or footer is required", nil
+			}
+		}
+		if parsed.Title == "" && parsed.URL != "" {
+			return "Title is a required field for URL", nil
+		}
+		if parsed.Author.Name == "" && parsed.Author.IconURL != "" {
+			parsed.Author.Name = "\u200b"
+		} else if parsed.Author.Name == "" && parsed.Author.URL != "" {
+			return "Author Name is required for Author URL", nil
+		}
+		if parsed.Footer.Text == "" && parsed.Footer.IconURL != "" {
+			parsed.Footer.Text = "\u200b"
 		}
 		return parsed, nil
 	},
