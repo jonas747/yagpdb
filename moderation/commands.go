@@ -480,7 +480,7 @@ var ModerationCommands = []*commands.YAGCommand{
 			userFilter := parsed.Args[1].Int64()
 
 			num := parsed.Args[0].Int()
-			if (userFilter == 0 || userFilter == parsed.Author.ID) && parsed.Source != 0 {
+			if (userFilter == 0 || userFilter == parsed.Author.ID) && parsed.Source != dcmd.TriggerSourceDM {
 				num++ // Automatically include our own message if not triggeded by exec/execAdmin
 			}
 
