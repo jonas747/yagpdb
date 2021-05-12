@@ -17,6 +17,7 @@ import (
 	"github.com/jonas747/yagpdb/stdcommands/customembed"
 	"github.com/jonas747/yagpdb/stdcommands/dcallvoice"
 	"github.com/jonas747/yagpdb/stdcommands/define"
+	"github.com/jonas747/yagpdb/stdcommands/dictionary"
 	"github.com/jonas747/yagpdb/stdcommands/dogfact"
 	"github.com/jonas747/yagpdb/stdcommands/findserver"
 	"github.com/jonas747/yagpdb/stdcommands/globalrl"
@@ -120,6 +121,12 @@ func (p *Plugin) AddCommands() {
 
 	statedbg.Commands()
 
+	if !dictionary.ShouldRegister() {
+		common.GetPluginLogger(p).Warn("Owlbot API token not provided, skipping adding dictionary command...")
+		return
+	}
+
+	commands.AddRootCommands(p, dictionary.Command)
 }
 
 func (p *Plugin) BotInit() {

@@ -5,7 +5,6 @@ import (
 	"github.com/jonas747/yagpdb/common/featureflags"
 	"github.com/jonas747/yagpdb/common/prom"
 	"github.com/jonas747/yagpdb/common/run"
-	"github.com/jonas747/yagpdb/owlbot"
 	"github.com/jonas747/yagpdb/web/discorddata"
 
 	// Core yagpdb packages
@@ -68,7 +67,6 @@ func main() {
 	moderation.RegisterPlugin()
 	reputation.RegisterPlugin()
 	aylien.RegisterPlugin()
-	owlbot.RegisterPlugin()
 	streaming.RegisterPlugin()
 	automod_legacy.RegisterPlugin()
 	automod.RegisterPlugin()

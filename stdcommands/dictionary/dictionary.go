@@ -1,7 +1,8 @@
-package owlbot
+package dictionary
 
 import (
 	"encoding/json"
+	"html"
 	"io"
 	"net/http"
 	"net/url"
@@ -17,91 +18,69 @@ import (
 	"github.com/jonas747/yagpdb/common"
 	"github.com/jonas747/yagpdb/common/config"
 	"github.com/microcosm-cc/bluemonday"
-	"golang.org/x/net/html"
 )
 
 var confOwlbotToken = config.RegisterOption("yagpdb.owlbot_token", "Owlbot API token", "")
 
-var logger = common.GetPluginLogger(&Plugin{})
-
-type Plugin struct{}
-
-func (p *Plugin) PluginInfo() *common.PluginInfo {
-	return &common.PluginInfo{
-		Name:     "Owlbot",
-		SysName:  "owlbot",
-		Category: common.PluginCategoryMisc,
-	}
+func ShouldRegister() bool {
+	return confOwlbotToken.GetString() != ""
 }
 
-func RegisterPlugin() {
-	if confOwlbotToken.GetString() == "" {
-		logger.Warn("Missing Owlbot token, not loading plugin")
-		return
-	}
+var Command = &commands.YAGCommand{
+	CmdCategory:  commands.CategoryFun,
+	Name:         "dictionary",
+	Aliases:      []string{"dict", "owl"},
+	Description:  "Get the definition of an English word using the Owlbot API.",
+	RequiredArgs: 1,
+	Cooldown:     5,
+	Arguments: []*dcmd.ArgDef{
+		{Name: "Query", Help: "Word to search for", Type: dcmd.String},
+	},
+	DefaultEnabled:      true,
+	SlashCommandEnabled: true,
+	RunFunc: func(data *dcmd.Data) (interface{}, error) {
+		query := strings.ToLower(data.Args[0].Str())
+		req, err := http.NewRequest("GET", "https://owlbot.info/api/v4/dictionary/"+url.QueryEscape(query), nil)
+		if err != nil {
+			return nil, err
+		}
 
-	common.RegisterPlugin(&Plugin{})
-}
+		req.Header.Set("Accept", "application/json")
+		req.Header.Set("Authorization", "Token "+confOwlbotToken.GetString())
 
-var _ commands.CommandProvider = (*Plugin)(nil)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
 
-func (p *Plugin) AddCommands() {
-	commands.AddRootCommands(p, &commands.YAGCommand{
-		CmdCategory:  commands.CategoryFun,
-		Name:         "dictionary",
-		Aliases:      []string{"dict", "owl"},
-		Description:  "Get the definition of an English word using the Owlbot API.",
-		RequiredArgs: 1,
-		Cooldown:     5,
-		Arguments: []*dcmd.ArgDef{
-			{Name: "Query", Help: "Word to search for", Type: dcmd.String},
-		},
-		DefaultEnabled:      true,
-		SlashCommandEnabled: true,
-		RunFunc: func(data *dcmd.Data) (interface{}, error) {
-			query := strings.ToLower(data.Args[0].Str())
-			req, err := http.NewRequest("GET", "https://owlbot.info/api/v4/dictionary/"+url.QueryEscape(query), nil)
-			if err != nil {
-				return nil, err
+		if resp.StatusCode == 404 {
+			return "Could not find a definition for that word.", nil
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var res OwlbotResult
+		err = json.Unmarshal(body, &res)
+		if err != nil || len(res.Definitions) == 0 {
+			return "Could not find a definition for that word.", err
+		}
+
+		if len(res.Definitions) == 1 || data.Context().Value(paginatedmessages.CtxKeyNoPagination) != nil {
+			return createOwlbotDefinitionEmbed(&res, res.Definitions[0]), nil
+		}
+
+		_, err = paginatedmessages.CreatePaginatedMessage(data.GuildData.GS.ID, data.ChannelID, 1, len(res.Definitions), func(p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
+			if page > len(res.Definitions) {
+				return nil, paginatedmessages.ErrNoResults
 			}
 
-			req.Header.Set("Accept", "application/json")
-			req.Header.Set("Authorization", "Token "+confOwlbotToken.GetString())
-
-			resp, err := http.DefaultClient.Do(req)
-			if err != nil {
-				return nil, err
-			}
-
-			if resp.StatusCode == 404 {
-				return "Could not find a definition for that word.", nil
-			}
-
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return nil, err
-			}
-
-			var res OwlbotResult
-			err = json.Unmarshal(body, &res)
-			if err != nil || len(res.Definitions) == 0 {
-				return "Could not find a definition for that word.", err
-			}
-
-			if len(res.Definitions) == 1 || data.Context().Value(paginatedmessages.CtxKeyNoPagination) != nil {
-				return createOwlbotDefinitionEmbed(&res, res.Definitions[0]), nil
-			}
-
-			_, err = paginatedmessages.CreatePaginatedMessage(data.GuildData.GS.ID, data.ChannelID, 1, len(res.Definitions), func(p *paginatedmessages.PaginatedMessage, page int) (*discordgo.MessageEmbed, error) {
-				if page > len(res.Definitions) {
-					return nil, paginatedmessages.ErrNoResults
-				}
-
-				return createOwlbotDefinitionEmbed(&res, res.Definitions[page-1]), nil
-			})
-			return "", err
-		},
-	})
+			return createOwlbotDefinitionEmbed(&res, res.Definitions[page-1]), nil
+		})
+		return "", err
+	},
 }
 
 func createOwlbotDefinitionEmbed(res *OwlbotResult, def *OwlbotDefinition) *discordgo.MessageEmbed {
