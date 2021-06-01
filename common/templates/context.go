@@ -43,6 +43,9 @@ var (
 		"split":     strings.Split,
 		"title":     strings.Title,
 
+		// regexp
+		"reQuoteMeta": regexp.QuoteMeta,
+
 		// math
 		"add":               add,
 		"sub":               tmplSub,
