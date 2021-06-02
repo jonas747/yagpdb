@@ -592,7 +592,7 @@ func roleIsAbove(a, b *discordgo.Role) bool {
 	return dutil.IsRoleAbove(a, b)
 }
 
-func randInt(args ...interface{}) int {
+func randInt(args ...interface{}) (int, error) {
 	min := int64(0)
 	max := int64(10)
 	if len(args) >= 2 {
@@ -602,8 +602,13 @@ func randInt(args ...interface{}) int {
 		max = ToInt64(args[0])
 	}
 
-	r := rand.Int63n(max - min)
-	return int(r + min)
+	diff := max - min
+	if diff <= 0 {
+		return 0, errors.New("start must be strictly less than stop")
+	}
+
+	r := rand.Int63n(diff)
+	return int(r + min), nil
 }
 
 func tmplRound(args ...interface{}) float64 {
