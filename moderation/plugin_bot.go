@@ -683,7 +683,7 @@ func handleScheduledUnlock(evt *seventsmodels.ScheduledEvent, data interface{}) 
 	guildID := evt.GuildID
 	roleID := int(unlockData.RoleID)
 
-	g := bot.State.Guild(true, guildID)
+	g := bot.State.GetGuild(guildID)
 	if g == nil {
 		logger.WithField("guild", guildID).Error("Unlock scheduled for guild not in state")
 		return false, nil
@@ -691,7 +691,13 @@ func handleScheduledUnlock(evt *seventsmodels.ScheduledEvent, data interface{}) 
 
 	reason := "Timed lockdown expired."
 
-	_, err = LockUnlockRole(nil, false, g, nil, g.MemberCopy(true, common.BotUser.ID), common.BotUser, reason, strconv.Itoa(roleID), false, 0, 0)
+	botMember, err := bot.GetMember(g.ID, common.BotUser.ID)
+	if err != nil || botMember == nil {
+		logger.WithField("guild", guildID).Error("Bot not find in state for unlock event")
+		return true, nil
+	}
+
+	_, err = LockUnlockRole(nil, false, g, nil, botMember, common.BotUser, reason, strconv.Itoa(roleID), false, 0, 0)
 
 	if err != nil {
 		logger.WithField("guild", guildID).WithError(err).Error("failed role unlock")

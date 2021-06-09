@@ -277,7 +277,7 @@ func BanUser(config *Config, guildID int64, channel *dstate.ChannelState, messag
 	return BanUserWithDuration(config, guildID, channel, message, author, reason, user, 0, 1)
 }
 
-func LockUnlockRole(config *Config, lock bool, gs *dstate.GuildState, channel *dstate.ChannelState, authorMember *dstate.MemberState, modlogAuthor *discordgo.User, reason, roleS string, force bool, totalPerms int, dur time.Duration) (interface{}, error) {
+func LockUnlockRole(config *Config, lock bool, gs *dstate.GuildSet, channel *dstate.ChannelState, authorMember *dstate.MemberState, modlogAuthor *discordgo.User, reason, roleS string, force bool, totalPerms int, dur time.Duration) (interface{}, error) {
 	config, err := getConfigIfNotSet(gs.ID, config)
 	if err != nil {
 		return nil, common.ErrWithCaller(err)
@@ -296,12 +296,9 @@ func LockUnlockRole(config *Config, lock bool, gs *dstate.GuildState, channel *d
 		return "No role with the Name or ID `" + roleS + "` found.", nil
 	}
 
-	gs.RLock()
 	if !bot.IsMemberAboveRole(gs, authorMember, role) {
-		gs.RUnlock()
 		return "You can't lock/unlock roles above you.", nil
 	}
-	gs.RUnlock()
 
 	if dur > 0 && dur < time.Minute {
 		dur = time.Minute
