@@ -859,7 +859,7 @@ func (c *Context) findRoleByName(name string) *discordgo.Role {
 	return nil
 }
 
-func (c *Context) tmplHasPermissions(needed int) (bool, error) {
+func (c *Context) tmplHasPermissions(needed int64) (bool, error) {
 	if c.IncreaseCheckGenericAPICall() {
 		return false, ErrTooManyAPICalls
 	}
@@ -879,7 +879,7 @@ func (c *Context) tmplHasPermissions(needed int) (bool, error) {
 	return c.msHasPerms(c.MS, c.CurrentFrame.CS.ID, needed)
 }
 
-func (c *Context) tmplTargetHasPermissions(target interface{}, needed int) (bool, error) {
+func (c *Context) tmplTargetHasPermissions(target interface{}, needed int64) (bool, error) {
 	if c.IncreaseCheckGenericAPICall() {
 		return false, ErrTooManyAPICalls
 	}
@@ -905,7 +905,7 @@ func (c *Context) tmplTargetHasPermissions(target interface{}, needed int) (bool
 	return c.msHasPerms(ms, c.CurrentFrame.CS.ID, needed)
 }
 
-func (c *Context) tmplGetTargetPermissionsIn(target interface{}, channel interface{}) (int, error) {
+func (c *Context) tmplGetTargetPermissionsIn(target interface{}, channel interface{}) (int64, error) {
 	if c.IncreaseCheckGenericAPICall() {
 		return 0, ErrTooManyAPICalls
 	}
@@ -925,11 +925,11 @@ func (c *Context) tmplGetTargetPermissionsIn(target interface{}, channel interfa
 		return 0, err
 	}
 
-	return c.GS.MemberPermissionsMS(true, channelID, ms)
+	return c.GS.GetMemberPermissions(channelID, ms.User.ID, ms.Member.Roles)
 }
 
-func (c *Context) msHasPerms(ms *dstate.MemberState, channelID int64, needed int) (bool, error) {
-	perms, err := c.GS.MemberPermissionsMS(true, c.CurrentFrame.CS.ID, ms)
+func (c *Context) msHasPerms(ms *dstate.MemberState, channelID int64, needed int64) (bool, error) {
+	perms, err := c.GS.GetMemberPermissions(channelID, ms.User.ID, ms.Member.Roles)
 	if err != nil {
 		return false, err
 	}
