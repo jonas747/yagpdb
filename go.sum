@@ -345,8 +345,8 @@ github.com/jonas747/discordgo v1.1.7/go.mod h1:Mq9l7/Kn7L8Np5p//vuxKfnZohrX70XYx
 github.com/jonas747/discordgo v1.1.9/go.mod h1:Mq9l7/Kn7L8Np5p//vuxKfnZohrX70XYx9cGoa+19J8=
 github.com/jonas747/discordgo v1.5.1/go.mod h1:AtjBAWqqaBsSj2dgxKaeQ3Gy8GFlDRg+PZiFcsqav00=
 github.com/jonas747/discordgo v1.5.5/go.mod h1:AtjBAWqqaBsSj2dgxKaeQ3Gy8GFlDRg+PZiFcsqav00=
-github.com/jonas747/discordgo v1.5.7 h1:xSCtppOnF43SwichY3sEd8ZWYoQZYXubWfdFUGXA938=
-github.com/jonas747/discordgo v1.5.7/go.mod h1:AtjBAWqqaBsSj2dgxKaeQ3Gy8GFlDRg+PZiFcsqav00=
+github.com/jonas747/discordgo v1.6.3 h1:WPTvakCAd6BBsBN+fF6jKMIGneLGmiGrUm0xYf+1qVs=
+github.com/jonas747/discordgo v1.6.3/go.mod h1:AtjBAWqqaBsSj2dgxKaeQ3Gy8GFlDRg+PZiFcsqav00=
 github.com/jonas747/dshardorchestrator v0.1.0 h1:3/v+lx0gLupm7/VZr7wbfvUGhpxvuNC5JHaS+OnWjCc=
 github.com/jonas747/dshardorchestrator v0.1.0/go.mod h1:ZlA6h9kj2H5q2aQkZgBiROp8zpIjIUMJQ3SOpVdWYfQ=
 github.com/jonas747/dshardorchestrator/v2 v2.0.2 h1:O7YjxZsuB2jmtulJxESpjYw6GBF3HYpe6eMU1sfFfU0=
@@ -445,8 +445,8 @@ github.com/matttproud/golang_protobuf_extensions v1.0.1 h1:4hp9jkHxhMHkqkrB3Ix0j
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/mediocregopher/mediocre-go-lib v0.0.0-20181029021733-cb65787f37ed/go.mod h1:dSsfyI2zABAdhcbvkXqgxOxrCsbYeHCPgrZkku60dSg=
 github.com/mediocregopher/radix/v3 v3.3.0/go.mod h1:EmfVyvspXz1uZEyPBMyGK+kjWiKQGvsUt6O3Pj+LDCQ=
-github.com/mediocregopher/radix/v3 v3.5.0 h1:8QHQmNh2ne9aFxTD3z63u/bkPPiOtknHoz80oP8EA/E=
-github.com/mediocregopher/radix/v3 v3.5.0/go.mod h1:8FL3F6UQRXHXIBSPUs5h0RybMF8i4n7wVopoX3x7Bv8=
+github.com/mediocregopher/radix/v3 v3.7.0 h1:SM9zJdme5pYGEVvh1HttjBjDmIaNBDKy+oDCv5w81Wo=
+github.com/mediocregopher/radix/v3 v3.7.0/go.mod h1:8FL3F6UQRXHXIBSPUs5h0RybMF8i4n7wVopoX3x7Bv8=
 github.com/microcosm-cc/bluemonday v1.0.1/go.mod h1:hsXNsILzKxV+sX77C5b8FSuKF00vh2OMYv+xgHpAMF4=
 github.com/microcosm-cc/bluemonday v1.0.2 h1:5lPfLTTAvAbtS0VqT+94yOtFnGfUWYyx0+iToC3Os3s=
 github.com/microcosm-cc/bluemonday v1.0.2/go.mod h1:iVP4YcDBq+n/5fb23BhYFvIMq/leAFZyRl6bYmGDlGc=

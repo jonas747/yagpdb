@@ -28,7 +28,7 @@ require (
 	github.com/jonas747/dca v0.0.0-20190317094138-10e959e9d3e8
 	github.com/jonas747/dcmd/v3 v3.0.2
 	github.com/jonas747/dice v0.0.0-20170619144252-7735f6ee7b69
-	github.com/jonas747/discordgo v1.5.7
+	github.com/jonas747/discordgo v1.6.3
 	github.com/jonas747/dshardorchestrator/v2 v2.0.2
 	github.com/jonas747/dstate/v3 v3.0.7
 	github.com/jonas747/dutil v0.0.3
@@ -44,7 +44,7 @@ require (
 	github.com/karlseguin/rcache v1.0.1
 	github.com/lib/pq v1.2.1-0.20191011153232-f91d3411e481
 	github.com/lunixbochs/vtclean v1.0.0
-	github.com/mediocregopher/radix/v3 v3.5.0
+	github.com/mediocregopher/radix/v3 v3.7.0
 	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/miolini/datacounter v0.0.0-20190724021726-aa48df3a02c1
 	github.com/natefinch/lumberjack v2.0.0+incompatible

@@ -539,6 +539,8 @@ func baseContextFuncs(c *Context) {
 	c.addContextFunc("onlineCount", c.tmplOnlineCount)
 	c.addContextFunc("onlineCountBots", c.tmplOnlineCountBots)
 	c.addContextFunc("editNickname", c.tmplEditNickname)
+
+	c.addContextFunc("sort", c.tmplSort)
 }
 
 type limitedWriter struct {
@@ -594,7 +596,16 @@ func (d Dict) Set(key interface{}, value interface{}) string {
 }
 
 func (d Dict) Get(key interface{}) interface{} {
-	return d[key]
+	out, ok := d[key]
+	if !ok {
+		switch key.(type) {
+		case int:
+			out = d[ToInt64(key)]
+		case int64:
+			out = d[tmplToInt(key)]
+		}
+	}
+	return out
 }
 
 func (d Dict) Del(key interface{}) string {
