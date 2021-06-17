@@ -1386,9 +1386,5 @@ func (ml *MessageLengthTrigger) CheckMessage(triggerCtx *TriggerContext, cs *dst
 		return utf8.RuneCountInString(m.Content) < dataCast.Length, nil
 	}
 
-	if utf8.RuneCountInString(m.Content) > dataCast.Length {
-		return true, nil
-	}
-
-	return false, nil
+	return utf8.RuneCountInString(m.Content) > dataCast.Length, nil
 }
