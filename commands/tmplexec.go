@@ -241,7 +241,7 @@ func execCmd(tmplCtx *templates.Context, dryRun bool, m *discordgo.MessageCreate
 		return "", errors.WithMessage(err, "exec/execadmin, run")
 	}
 
-	cast.SetCooldownGuild(data.ContainerChain, tmplCtx.GS.ID)
+	_ = cast.SetCooldownGuild(data.ContainerChain, tmplCtx.GS.ID)
 
 	switch v := resp.(type) {
 	case error:
