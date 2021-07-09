@@ -54,20 +54,24 @@ func cmdFuncHelp(data *dcmd.Data) (interface{}, error) {
 			return resp, nil
 		}
 
-		if len(yc.RequireDiscordPerms) == 0 {
+		if len(yc.RequireDiscordPerms) == 0 && yc.RequiredDiscordPermsHelp == "" {
 			return resp, nil
 		}
 
-		humanizedPerms := make([]string, 0, len(yc.RequireDiscordPerms))
-		for _, v := range yc.RequireDiscordPerms {
-			h := common.HumanizePermissions(v)
-			joined := strings.Join(h, " and ")
-			humanizedPerms = append(humanizedPerms, "("+joined+")")
+		requiredPerms := yc.RequiredDiscordPermsHelp
+		if requiredPerms == "" {
+			humanizedPerms := make([]string, 0, len(yc.RequireDiscordPerms))
+			for _, v := range yc.RequireDiscordPerms {
+				h := common.HumanizePermissions(v)
+				joined := strings.Join(h, " and ")
+				humanizedPerms = append(humanizedPerms, "("+joined+")")
+			}
+			requiredPerms = strings.Join(humanizedPerms, " or ")
 		}
 
 		embed := resp[0]
 		embed.Footer = &discordgo.MessageEmbedFooter{
-			Text: "Required permissions: " + strings.Join(humanizedPerms, " or "),
+			Text: "Required permissions: " + requiredPerms,
 		}
 		return embed, nil
 	}
