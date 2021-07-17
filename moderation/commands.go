@@ -804,6 +804,48 @@ var ModerationCommands = []*commands.YAGCommand{
 		},
 	},
 	{
+		CmdCategory:  commands.CategoryModeration,
+		Name:         "Slowmode",
+		Aliases:      []string{"sm"},
+		Description:  "Changes the channel slowmode during an optional duration.",
+		RequiredArgs: 1,
+		Cooldown:     10,
+		Arguments: []*dcmd.ArgDef{
+			{Name: "RateLimit", Type: dcmd.Int},
+			{Name: "Duration", Type: &commands.DurationArg{}},
+		},
+		RunFunc: func(parsed *dcmd.Data) (interface{}, error) {
+			config, _, err := MBaseCmd(parsed, 0)
+			if err != nil {
+				return nil, err
+			}
+
+			_, err = MBaseCmdSecond(parsed, "", true, discordgo.PermissionManageMessages, nil, config.SlowmodeCommandEnabled)
+			if err != nil {
+				return nil, err
+			}
+
+			duration := time.Duration(0)
+			if parsed.Args[1].Value != nil {
+				duration = parsed.Args[1].Value.(time.Duration)
+			}
+			if duration > 0 && duration < time.Minute {
+				duration = time.Minute
+			}
+
+			RL := parsed.Args[0].Int()
+			if RL > 21600 {
+				RL = 21600
+			}
+
+			out, err := SlowModeFunc(config, parsed.GuildData.GS.ID, parsed.GuildData.CS, parsed.Author, int(duration.Minutes()), RL)
+			if err != nil {
+				return nil, err
+			}
+			return out, nil
+		},
+	},
+	{
 		CmdCategory: commands.CategoryModeration,
 		Name:        "TopWarnings",
 		Aliases:     []string{"topwarns"},

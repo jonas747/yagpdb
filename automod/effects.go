@@ -762,6 +762,12 @@ func (slow *EnableChannelSlowmodeEffect) Apply(ctxData *TriggeredRuleData, setti
 		RateLimitPerUser: &rl,
 	}
 
+	channelData := ctxData.GS.GetChannel(ctxData.CS.ID)
+	var rateLimit int
+	if channelData != nil {
+		rateLimit = channelData.RateLimitPerUser
+	}
+
 	_, err := common.BotSession.ChannelEditComplex(ctxData.CS.ID, edit)
 	if err != nil {
 		return err
@@ -777,14 +783,14 @@ func (slow *EnableChannelSlowmodeEffect) Apply(ctxData *TriggeredRuleData, setti
 		qm.Where("guild_id = ?", ctxData.GS.ID),
 		qm.Where("(data->>'channel_id')::bigint = ?", ctxData.CS.ID),
 		qm.Where("processed = false")).DeleteAll(context.Background(), common.PQ)
-
 	if err != nil {
 		return err
 	}
 
 	// add the scheduled event for it
 	err = scheduledevents2.ScheduleEvent("amod2_reset_channel_ratelimit", ctxData.GS.ID, time.Now().Add(time.Second*time.Duration(s.Duration)), &ResetChannelRatelimitData{
-		ChannelID: ctxData.CS.ID,
+		ChannelID:  ctxData.CS.ID,
+		OriginalRL: rateLimit,
 	})
 
 	if err != nil {
