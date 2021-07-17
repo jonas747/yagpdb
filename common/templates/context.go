@@ -17,6 +17,7 @@ import (
 	"github.com/jonas747/template"
 	"github.com/jonas747/yagpdb/bot"
 	"github.com/jonas747/yagpdb/common"
+	"github.com/jonas747/yagpdb/common/prefix"
 	"github.com/jonas747/yagpdb/common/scheduledevents2"
 	"github.com/sirupsen/logrus"
 	"github.com/vmihailenco/msgpack"
@@ -194,6 +195,7 @@ func (c *Context) setupBaseData() {
 		c.Data["Guild"] = c.GS
 		c.Data["Server"] = c.GS
 		c.Data["server"] = c.GS
+		c.Data["ServerPrefix"] = prefix.GetPrefixIgnoreError(c.GS.ID)
 	}
 
 	if c.CurrentFrame.CS != nil {
