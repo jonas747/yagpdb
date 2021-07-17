@@ -894,10 +894,59 @@ func ToByte(from interface{}) []byte {
 func tmplJson(v interface{}) (string, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
-		return "", err
+		b, err = json.Marshal(convertMap(v))
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return string(b), nil
+}
+
+func convertMap(m interface{}) interface{} {
+	out := map[string]interface{}{}
+	val := reflect.ValueOf(m)
+	switch val.Kind() {
+	case reflect.Map:
+		for _, k := range val.MapKeys() {
+			v := val.MapIndex(k)
+			switch t := v.Interface().(type) {
+			case map[interface{}]interface{}, Dict, SDict:
+				out[ToString(k)] = convertMap(t)
+			case Slice:
+				out[ToString(k)] = handleSlices(t, nil)
+			case []interface{}:
+				out[ToString(k)] = handleSlices(nil, t)
+			default:
+				out[ToString(k)] = t
+			}
+		}
+		return out
+	default:
+		switch t := m.(type) {
+		case Slice:
+			return handleSlices(t, nil)
+		case []interface{}:
+			return handleSlices(nil, t)
+		default:
+			return m
+		}
+	}
+}
+
+func handleSlices(a Slice, b []interface{}) []interface{} {
+	var out []interface{}
+	if a == nil {
+		for _, v := range b {
+			out = append(out, convertMap(v))
+		}
+	} else {
+		for _, v := range a {
+			out = append(out, convertMap(v))
+		}
+	}
+
+	return out
 }
 
 func tmplFormatTime(t time.Time, args ...string) string {
