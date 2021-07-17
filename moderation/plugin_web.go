@@ -71,6 +71,7 @@ func HandlePostModeration(w http.ResponseWriter, r *http.Request) (web.TemplateD
 	newConfig := ctx.Value(common.ContextKeyParsedForm).(*Config)
 	newConfig.DefaultMuteDuration.Valid = true
 	newConfig.DefaultBanDeleteDays.Valid = true
+	newConfig.DefaultLockdownDuration.Valid = true
 	templateData["ModConfig"] = newConfig
 
 	err := newConfig.Save(activeGuild.ID)
@@ -122,10 +123,11 @@ func (p *Plugin) LoadServerHomeWidget(w http.ResponseWriter, r *http.Request) (w
 	<li>Ban command: %s</li>
 	<li>Mute/Unmute commands: %s</li>
 	<li>Warning commands: %s</li>
+	<li>Lockdown commands: %s</li>
 </ul>`
 
 	if config.ReportEnabled || config.CleanEnabled || config.GiveRoleCmdEnabled || config.ActionChannel != "" ||
-		config.MuteEnabled || config.KickEnabled || config.BanEnabled || config.WarnCommandsEnabled {
+		config.MuteEnabled || config.KickEnabled || config.BanEnabled || config.WarnCommandsEnabled || config.LockdownCmdEnabled {
 		templateData["WidgetEnabled"] = true
 	} else {
 		templateData["WidgetDisabled"] = true
@@ -134,7 +136,8 @@ func (p *Plugin) LoadServerHomeWidget(w http.ResponseWriter, r *http.Request) (w
 	templateData["WidgetBody"] = template.HTML(fmt.Sprintf(format, web.EnabledDisabledSpanStatus(config.ReportEnabled),
 		web.EnabledDisabledSpanStatus(config.CleanEnabled), web.EnabledDisabledSpanStatus(config.GiveRoleCmdEnabled),
 		web.EnabledDisabledSpanStatus(config.KickEnabled), web.EnabledDisabledSpanStatus(config.BanEnabled),
-		web.EnabledDisabledSpanStatus(config.MuteEnabled), web.EnabledDisabledSpanStatus(config.WarnCommandsEnabled)))
+		web.EnabledDisabledSpanStatus(config.MuteEnabled), web.EnabledDisabledSpanStatus(config.WarnCommandsEnabled),
+		web.EnabledDisabledSpanStatus(config.LockdownCmdEnabled)))
 
 	return templateData, nil
 }
