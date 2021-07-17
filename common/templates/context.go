@@ -45,6 +45,9 @@ var (
 		"hasPrefix": strings.HasPrefix,
 		"hasSuffix": strings.HasSuffix,
 
+		// regexp
+		"reQuoteMeta": regexp.QuoteMeta,
+
 		// math
 		"add":               add,
 		"sub":               tmplSub,
